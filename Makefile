@@ -5,4 +5,4 @@ run: all
 	./bin/main
 
 clean:
-	rm -f hello
+	rm -rf ./bin
