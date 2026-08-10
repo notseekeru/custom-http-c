@@ -1,8 +1,8 @@
 all:
-	cc -Wall -Wextra -o ./bin/main main.c
+	cc -Wall -Wextra -o ./bin/main $(wildcard *.c)
 
 run: all
-	./hello
+	./bin/main
 
 clean:
 	rm -f hello
