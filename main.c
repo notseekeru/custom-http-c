@@ -13,14 +13,16 @@ int main() {
   bind(socket_fd, (struct sockaddr *)&addr, sizeof(addr));
 
   listen(socket_fd, 1);
-
-  int client_fd = accept(socket_fd, 0, 0);
-
   const char *msg = "Hello, Server!";
   int msg_len = strlen(msg);
 
-  int bytes_sent = send(client_fd, msg, msg_len, 0);
+  while (1) {
+    int client_fd = accept(socket_fd, 0, 0);
+    if (client_fd >= 1) {
+      int bytes_sent = send(client_fd, msg, msg_len, 0);
+      shutdown(client_fd, 1);
+    }
+  }
 
-  shutdown(client_fd, 1);
   shutdown(socket_fd, 1);
 }
