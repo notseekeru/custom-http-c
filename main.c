@@ -1,31 +1,38 @@
-#include <arpa/inet.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 
-int main() {
-  int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+// Goal: Extract "/index.html" from "GET /index.html HTTP/1.1"
+// You cannot use strtok, strstr, or any high-level string function.
+// Only pointer arithmetic and malloc.
 
-  struct sockaddr_in addr = {0};
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(8080);
-  addr.sin_addr.s_addr = INADDR_ANY;
+// 1. Find the first space.
+// 2. Move the pointer to the character after the first space.
+// 3. Find the second space.
+// 4. Allocate memory for the substring (use malloc).
+// 5. Copy the substring into the allocated memory.
+// 6. Return the pointer.
+// Bonus: Handle edge cases (no space, invalid format).
 
-  bind(socket_fd, (struct sockaddr *)&addr, sizeof(addr));
+typedef struct {
+  char* key;
+  char* value;
+} KVPair;
 
-  listen(socket_fd, 1);
-  const char *msg = "Hello, Server!";
-  int msg_len = strlen(msg);
+char *kv_helper(char *source) {}
 
-  while (1) {
-    int client_fd = accept(socket_fd, 0, 0);
-    if (client_fd >= 1) {
-      send(client_fd, msg, msg_len, 0);
-      shutdown(client_fd, 1);
+const char* extract_path(const char *request_line) {
+  for (int i = 0; i < strlen(request_line); i++) {
+    if (request_line[i] == ' '){
+      return &request_line[i];
     }
   }
+  return NULL;
+}
 
-  shutdown(socket_fd, 1);
+int main() {
+    char* line = "GET /index.html HTTP/1.1";
+    const char* path = extract_path(line);
+    printf("Path: %s\n", path);
+    return 0;
 }
