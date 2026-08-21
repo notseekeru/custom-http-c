@@ -3,33 +3,46 @@
 #include <string.h>
 
 typedef struct {
-  char key[50];
-  char value[50];
+  char *key;
+  char *value;
 } KVPair;
 
-KVPair *kv_helper(char *source) {
+KVPair *kv_helper(char *key_source, char *value_source) {
   KVPair *pair = malloc(sizeof(KVPair));
 
   if (pair == NULL) return NULL;
 
-  strcpy(pair->key, "username");
-  strcpy(pair->value, source);
+  pair->key = malloc(strlen(key_source) + 1);
+  if (pair->key == NULL) {
+    free(pair);
+    return NULL;
+  }
+
+  pair->value = malloc(strlen(value_source) + 1);
+  if (pair->value == NULL) {
+    free(pair->key);
+    free(pair);
+    return NULL;
+  }
+
+  strcpy(pair->key, key_source);
+  strcpy(pair->value, value_source);
+
   return pair;
 }
 
 int main() {
   printf("\n");
 
-  KVPair *my_pair = kv_helper("john_doe");
+  KVPair *my_pair = kv_helper("john_doe", "secret123");
 
-  if (my_pair == NULL) {
-    fprintf(stderr, "Memory allocation failed\n");
-    return 1;
-  }
+  if (my_pair == NULL) return -1;
 
   printf("Key: %s\n", my_pair->key);
   printf("Value: %s\n", my_pair->value);
 
+  free(my_pair->key);
+  free(my_pair->value);
   free(my_pair);
 
   return 0;
